@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
 
-  "name": "One-click Gengar",
-  "description": "This extension demonstrates the power of shadows.",
+  "name": "Ader",
+  "description": "Choose which ads you want, and get paid to see them!",
   "version": "1.0",
   "background": {
   	"scripts": [
@@ -13,7 +13,7 @@
   
   },
   "browser_action": {
-    "default_icon": "gengar.png",
+    "default_icon": "Ader Logo.png",
     "default_popup": "popup.html"
   },
   "content_scripts": [
