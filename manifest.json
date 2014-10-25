@@ -7,7 +7,7 @@
   "background": {
   	"scripts": [
   		"jquery.min.js",
-  		"toolbox.js",
+  		"functions.js",
   		"background.js"
   	]
   
@@ -19,7 +19,7 @@
   "content_scripts": [
   	{
   		"matches":["http://*/*", "https://*/*"],
-  		"js": ["toolbox.js","haunter.js"],
+  		"js": ["functions.js","contentscript.js"],
   		"run_at": "document_start",
   		"all_frames": true
   	}
