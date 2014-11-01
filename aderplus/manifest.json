@@ -6,6 +6,7 @@
       "jquery/jquery.min.js",
       "port.js",
       "functions.js",
+      "toolbox.js",
       "stats.js",
       "filtering/domainset.js",
       "filtering/filteroptions.js",
