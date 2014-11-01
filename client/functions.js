@@ -7,6 +7,7 @@ var serverURL = "http://ader.klgilbert.com/";
 // Outputs: object containing all parts of |url| as attributes
 
 VERBOSE_DEBUG = true;
+
 parseUri = function(url) {
   var matches = /^(([^:]+(?::|$))(?:(?:\w+:)?\/\/)?(?:[^:@\/]*(?::[^:@\/]*)?@)?(([^:\/?#]*)(?::(\d*))?))((?:[^?#\/]*\/)*[^?#]*)(\?[^#]*)?(\#.*)?/.exec(url);
   // The key values are identical to the JS location object values for that key
@@ -42,22 +43,12 @@ parseUri.secondLevelDomainOnly = function(domain, keepDot) {
 
 function retrieveAds(adCount) {
     //FIX THIS: THIS MUST ACCESS FILTERED AD OBJECT AND RETURN THE CORRECT NUMBER OF ADS
-    var ads = []; 
-    data = ["adCount": adCount];
-    $.getJSON("http://ader.klgilbert.com/", data, function(data) { 
-        //data will be an object of ad urls
-        $.each(data, function(index, value) {
-            //iterate through the data, append each ad url to the ads array
-            ads.push(value);         
-        });
-           
-    });
-    return ads;
+ 
 }
 
 function createAccount(username, password) {
 
- data = ["username": username, "password": password];
+ data = {"username": username, "password": password};
     
  $.getJSON(serverURL, data, function(data) { /*data will be a web token which needs to get put in local storage. if returned error, return error*/  });
   downloadAds();
@@ -66,9 +57,10 @@ function createAccount(username, password) {
 
 function loginAccount(username, password) {
     
-    data = ["username": username, "password": password];
+    data = {"username": username, "password": password};
     $.getJSON(serverURL, data, function(data) { /*data will be a web token which needs to get put in local storage. if returned error, return error*/  });
-                
+    
+}
 function saveAdPrefs(prefs) {
  //save prefs in webtoken in local storage 
     downloadAds();
@@ -79,16 +71,43 @@ function saveAdPrefs(prefs) {
 function downloadAds() {
  //download ads from database and put in local storage
     
+    var ads = []; 
+    
+    data = {"adCount": adCount};
+    $.getJSON("http://ader.klgilbert.com/", data, function(data) { 
+        //data will be an object of ad urls
+        $.each(data, function(index, value) {
+            //iterate through the data, append each ad url to the ads array
+            ads.push(value);         
+        });
+           
+    });
+    return ads;
+    
 }
     
 function filterAds() {
-    
-    
-    
-}
+  //uses preferences from web token and creates new (or overwrites) filtered ad object in local storage  
     
     
 }
+    
+    
+function storageTest(message) {
+    console.log("successfully called storageTest");
+    var data = {"message":message};
+    chrome.storage.local.set(data, function(data) {
+     chrome.storage.local.get(["message"], function(value) {
+         console.log(value);        
+     })
+    });
+}
+
+console.log("functions online");
+
+    
+    
+
 
 
   

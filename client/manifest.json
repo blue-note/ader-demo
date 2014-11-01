@@ -14,7 +14,7 @@
   
   },
   "browser_action": {
-    "default_icon": "Ader Logo.png",
+    "default_icon": "browserIcon.png",
     "default_popup": "popup.html"
   },
   "content_scripts": [

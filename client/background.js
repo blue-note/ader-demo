@@ -1,6 +1,3 @@
-
-
-
 frameData = {
 
 	get: function(tabId, frameId){
@@ -74,7 +71,6 @@ function onBeforeRequestHandler(details) {
 
 	var type = details.type;
 	console.log("Reveal Type: "+details.type, "; url: ",url);
-	
 	
 
 			
