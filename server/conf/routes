@@ -3,7 +3,11 @@
 # ~~~~
 
 GET / controllers.Application.index()
+
+# Authentication
 GET /auth controllers.Authentication.authenticate()
+GET /register controllers.Authentication.register(email, password)
+
 GET /user/:id controllers.UsersController.getUser(id: Integer)
 GET /users controllers.UsersController.list()
 

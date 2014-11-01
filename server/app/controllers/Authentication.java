@@ -4,12 +4,21 @@ import play.*;
 import play.mvc.*;
 import models.*;
 import views.html.*;
+import play.libs.Json;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class Authentication extends Controller {
 
   public static Result authenticate() {
-    User member = new User("kasif.gilbert@gmail.com", "password");
-    member.save();
+    return ok("Success");
+  }
+
+  public static Result register(String email, String password) {
+    Users user = new Users(email, password);
+    user.save();
+
+    //ObjectNode result = Json.newObject();
+    //result.put("status", "success");
     return ok("Success");
   }
 }
