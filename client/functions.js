@@ -42,8 +42,28 @@ parseUri.secondLevelDomainOnly = function(domain, keepDot) {
 };
 
 function retrieveAds(adCount) {
-    //FIX THIS: THIS MUST ACCESS FILTERED AD OBJECT AND RETURN THE CORRECT NUMBER OF ADS
- 
+    var ads = [];
+    //get counter
+    chrome.storage.sync.set({"adCounter":"5"});
+    chrome.storage.sync.get(["adCounter"], function(counter) 
+    { 
+        count = parseInt(counter);
+        newCount = count;
+    //get filtered ads
+        
+    chrome.storage.sync.get(["filteredAds"], function(adList) {
+        $.each(adList, function(index, value) {
+            if (index >= count && index <= (count + adCount)) {
+                ads.push(value);
+                newCount++;
+            }
+                
+        });
+        
+    });
+
+    });
+    
 }
 
 function createAccount(username, password) {
@@ -52,7 +72,7 @@ function createAccount(username, password) {
     
  $.getJSON(serverURL, data, function(data) { /*data will be a web token which needs to get put in local storage. if returned error, return error*/  });
   downloadAds();
-    
+  chrome.storage.sync.set({"adCounter":"0"}); 
 }
 
 function loginAccount(username, password) {
@@ -61,8 +81,9 @@ function loginAccount(username, password) {
     $.getJSON(serverURL, data, function(data) { /*data will be a web token which needs to get put in local storage. if returned error, return error*/  });
     
 }
+    
 function saveAdPrefs(prefs) {
- //save prefs in webtoken in local storage 
+ // 
     downloadAds();
     filterAds();
     
@@ -71,18 +92,16 @@ function saveAdPrefs(prefs) {
 function downloadAds() {
  //download ads from database and put in local storage
     
-    var ads = []; 
-    
-    data = {"adCount": adCount};
-    $.getJSON("http://ader.klgilbert.com/", data, function(data) { 
-        //data will be an object of ad urls
-        $.each(data, function(index, value) {
-            //iterate through the data, append each ad url to the ads array
-            ads.push(value);         
-        });
-           
+    var ads = {}; 
+    data = {"query": "downloadAds"};
+    $.getJSON(serverURL, data, function(data) { 
+        //data will be a key-value object of indexes to ad urls
+          data = {"ad1":"url1","ad2":"url2"};
+          chrome.storage.sync.set({"allAds":data}, function() {
+           console.log("set preferences");   
+            testStorage();
+          })
     });
-    return ads;
     
 }
     
@@ -92,18 +111,16 @@ function filterAds() {
     
 }
     
+function testStorage() {
+   chrome.storage.sync.set({"allAds": {"ad1":"url1","ad2":"url2", "ad3":"url3"}});
+   chrome.storage.sync.get(["allAds"], function(value) {
+     console.log(value);
+     console.log(Object.keys(value).length);
+   });
     
-function storageTest(message) {
-    console.log("successfully called storageTest");
-    var data = {"message":message};
-    chrome.storage.local.set(data, function(data) {
-     chrome.storage.local.get(["message"], function(value) {
-         console.log(value);        
-     })
-    });
 }
+    
 
-console.log("functions online");
 
     
     
