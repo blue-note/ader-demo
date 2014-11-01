@@ -1,5 +1,5 @@
 var serverURL = "http://ader.klgilbert.com/";
-var devServerURL = "http://172.26.5.87:9000/";
+var devServerURL = "http://localhost:9000/";
 
 
 // Parse a URL. Based upon http://blog.stevenlevithan.com/archives/parseuri
@@ -42,51 +42,135 @@ parseUri.secondLevelDomainOnly = function(domain, keepDot) {
   return match[keepDot ? 0 : 1].toLowerCase();
 };
 
-function retrieveAds(adCount) {
+function retrieveAds(adsToShow) {
+    //output should be: url1,url2,url3,url1
     var ads = [];
+    var newCount;
     //get counter
-    chrome.storage.sync.set({"adCounter":"5"});
+    chrome.storage.sync.set({"adCounter":"0"});//take this out later
+    chrome.storage.sync.set({"filteredAds":{"ad1":"url1", "ad2":"url2","ad3":"url3"}});
+   
     chrome.storage.sync.get(["adCounter"], function(counter) 
     { 
-        count = parseInt(counter);
+        //count is how many ads in this list we have incremented through previously
+        var count = counter.adCounter;
+        //console.log("adCounter: "+count);
+        //copy new counter that will get incremented and re-stored
         newCount = count;
-    //get filtered ads
         
+        //get filtered ads   
     chrome.storage.sync.get(["filteredAds"], function(adList) {
-        $.each(adList, function(index, value) {
-            if (index >= count && index <= (count + adCount)) {
-                ads.push(value);
-                newCount++;
-            }
-                
-        });
+        var adsArray = $.map(adList.filteredAds, function(el) { return el; });
+        //console.log("adsArray: "+adsArray);
+        //var arr = $.map(adList, function(el) { return el; });
+        //var adsArray = $.map(arr[0], function(el) { return el; });   
+        var length = adsArray.length;
+        //console.log("adsArray length:" + length);
         
+        //i: number of ads i've incremented through in this loop
+        //count: index of ads I should start incrementing at
+        //newCount = count: new counter for how many ads I've incremented through total
+        
+        /* I have adsArray. I need to start at index count and increment #adsToShow number of times. whenever I get to the length of the array, I need to reset newCount to 0
+        i will be how many times i've incremented, from 0 to adsToShow
+        newCount will be the index I'm pulling the value from.
+        
+        */
+        
+        var i = 0;
+        while (i < adsToShow) {
+         if (newCount >= length) {
+          newCount = 0;   
+         }
+        ads.push(adsArray[newCount]);
+        newCount++;
+        i++;
+        console.log("ads to display:" + ads);
+        }
+       
+        console.log("newCount before callback: " + newCount);
+        if (i >= adsToShow) {
+              //to make sure that this is called after the loop is finished
+    console.log("newCount before setting is:" + newCount);
+    chrome.storage.sync.set({"adCounter":newCount});
+    chrome.storage.sync.get(["adCounter"], function(count) {
+    console.log("newCount in storage is:" +  count.adCounter);
+        });
+        }    
+          
+       });
+                
     });
-
-    });
+  
+    return ads;    
+    }
     
-}
 
 function createAccount(email, password) {
 
- data = {"email": email, "password": password};
+ var data = {"email": email, "password": password};
     
  $.getJSON(devServerURL+"register", data, function(data) { /*data will be a web token which needs to get put in local storage. if returned error, return error*/  });
   //downloadAds();
+    //initializing local storage attributes
   chrome.storage.sync.set({"adCounter":"0"}); 
+  chrome.storage.sync.set({"isPaused":"false"});
+  chrome.storage.sync.set({"sumImpressions":"0"});
+  chrome.storage.sync.set({"sumEarnings":"0"});
 }
 
 function loginAccount(email, password) {
     
-    data = {"username": username, "password": password};
+    var data = {"username": username, "password": password};
     $.getJSON(devServerURL+"login", data, function(data) { /*data will be a web token which needs to get put in local storage. if returned error, return error*/  });
     
 }
+
+function isPaused() {
+ chrome.storage.sync.get(["isPaused"], function(data) {
+   pause = data.isPaused;
+   return pause;
+   
+         
+ });
+    
+}
+    
+function flipPause() {
+   chrome.storage.sync.get(["isPaused"], function(data) {
+   pause = data.isPaused;
+       console.log("pause before:"+pause);
+   if (pause == "false") {
+   chrome.storage.sync.set({"isPaused":"true"});    
+   }
+   else {
+     chrome.storage.sync.set({"isPaused":"false"});   
+   }
+   
+         
+ }); 
+       
+}
     
 function saveAdPrefs(prefs) {
- // 
-    downloadAds();
-    filterAds();
+ //sample prefs object:
+    var prefs = {
+      "age":"21",
+      "interests": {"0":"golf","1":"cooking"}      
+    }
+    filterAds(prefs);
+    
+}
+
+
+function filterAds(prefs) {
+  //uses preferences from web token and creates new (or overwrites) filtered ad object in local storage 
+    data = prefs;
+   $.getJSON(devServerURL, data, function(data) { 
+        //data will be a key-value object of indexes to ad urls that are filtered based on prefs
+          data = {"ad1":"url1","ad2":"url2"};
+          chrome.storage.sync.set({"filteredAds":data});
+          }); 
     
 }
   
@@ -101,15 +185,32 @@ function downloadAds() {
           chrome.storage.sync.set({"allAds":data}, function() {
            console.log("set preferences");   
             testStorage();
-          })
+          });
     });
     
 }
+ 
+
+function incrementImpressions(num) {
+    chrome.storage.sync.get(["sumImpressions"], function(data) {
+        currImpressions = data.sumImpressions;
+        newImpressions = parseInt(currImpressions) + num; 
+    chrome.storage.sync.set({"sumImpressions":newImpressions}, function() {
+       calculateEarnings();       
+    });
+    });
+    return newImpressions;
+}
+
+function calculateEarnings() {
+    chrome.storage.sync.get(["sumImpressions"], function(data) {
+       var impressions = data.sumImpressions; 
+       var earnings = (impressions/1000)*3;
+       chrome.storage.sync.set({"sumEarnings":earnings}); 
+        
+    });
     
-function filterAds() {
-  //uses preferences from web token and creates new (or overwrites) filtered ad object in local storage  
-    
-    
+    return earnings;
 }
     
 function testStorage() {
