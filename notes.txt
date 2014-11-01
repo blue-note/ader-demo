@@ -1,0 +1,78 @@
+
+Editing his code: 
+    problems:
+        Complicated 
+
+doing 
+
+
+
+aiming 
+
+    His code
+        filter sets
+            
+            
+Key Questions:
+    How does he know which 3rd party URLS are bad vs good?  
+        - checks the parent frame 
+        - blocking filter list 
+            
+            
+Notes:
+    When browser sees a URL, it requests from it 
+    Implement a whitelist 
+    bad words:
+        ad 
+        sponsor 
+        random 
+    
+    
+check every hour: 
+    var that = this;
+  if (newUser)
+    this.checkFilterUpdates();
+  else
+    idleHandler.scheduleItemOnce(
+      function() { 
+        that.checkFilterUpdates();
+      },
+      60
+    );
+    
+    window.setInterval(
+    function() { 
+      idleHandler.scheduleItemOnce(function() {
+        that.checkFilterUpdates();
+      });
+    }, 
+    60 * 60 * 1000
+  );
+  
+  Giant white space and a lot of recurrsions. 
+  How to make the ads get blocked once and for good.
+  What did I change, that makes them refresh constantly 
+    Not from turning all non-scripts to swap vs CSS hiding.
+    Letting it loop cuts it from 50 to 27
+    Not from swapping the SRC of the IMG
+        It's probably because for some reason redirecting 
+        the URL to the picture simply makes it reload. 
+        Not from about:blank 
+    
+Problems: 
+    IMG[src$="//pagead2.googlesyndication.com/activeview?...
+    
+Notes:
+    0. If adblock is paused, escape 
+    00. If frameData can't track it, escape
+    01. If the framedomain is whitelisted, escape 
+    1. If it's blocked, and an image, subdoc, or object
+                    - Change the way it looks
+    2. If it's a blocked subdocument, redirect the URL 
+    3. If it's a blocked image, redirect url to small extension img
+    4. If it's blocked, increment counter 
+    5. IF IT'S ANYTHING ELSE, CANCEL BLOCKED??!  
+    
+    
+The sonic jpeg can't be read by the browser. 
+But I think HTML can be. I'll try redirecting it to a local thing. 
