@@ -1,4 +1,5 @@
 var serverURL = "http://ader.klgilbert.com/";
+var devServerURL = "http://172.26.5.87:9000/";
 
 
 // Parse a URL. Based upon http://blog.stevenlevithan.com/archives/parseuri
@@ -66,19 +67,19 @@ function retrieveAds(adCount) {
     
 }
 
-function createAccount(username, password) {
+function createAccount(email, password) {
 
- data = {"username": username, "password": password};
+ data = {"email": email, "password": password};
     
- $.getJSON(serverURL, data, function(data) { /*data will be a web token which needs to get put in local storage. if returned error, return error*/  });
-  downloadAds();
+ $.getJSON(devServerURL+"register", data, function(data) { /*data will be a web token which needs to get put in local storage. if returned error, return error*/  });
+  //downloadAds();
   chrome.storage.sync.set({"adCounter":"0"}); 
 }
 
-function loginAccount(username, password) {
+function loginAccount(email, password) {
     
     data = {"username": username, "password": password};
-    $.getJSON(serverURL, data, function(data) { /*data will be a web token which needs to get put in local storage. if returned error, return error*/  });
+    $.getJSON(devServerURL+"login", data, function(data) { /*data will be a web token which needs to get put in local storage. if returned error, return error*/  });
     
 }
     
@@ -94,7 +95,7 @@ function downloadAds() {
     
     var ads = {}; 
     data = {"query": "downloadAds"};
-    $.getJSON(serverURL, data, function(data) { 
+    $.getJSON(devServerURL, data, function(data) { 
         //data will be a key-value object of indexes to ad urls
           data = {"ad1":"url1","ad2":"url2"};
           chrome.storage.sync.set({"allAds":data}, function() {
