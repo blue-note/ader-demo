@@ -2,7 +2,8 @@
   "manifest_version": 2,
 
   "name": "Ader",
-  "description": "Choose which ads you want, and get paid to see them!",
+  "description": "Personalize your in-browser advertising experience, and get paid to do it.",
+  "offline_enabled": false,
   "version": "1.0",
   "background": {
   	"scripts": [
@@ -26,7 +27,7 @@
   ],
   
   "permissions": [
-    "http://*/*", "https://*/*", "tabs", "webRequest","webRequestBlocking"
+    "http://*/*", "https://*/*", "tabs", "webRequest","webRequestBlocking", "storage"
   ]
   
 }
