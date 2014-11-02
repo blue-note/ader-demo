@@ -1,6 +1,6 @@
 {
-  "name": "AdBlock",
-  "version": "2.7.3",
+  "name": "Ader",
+  "version": "1",
   "background": {
     "scripts": [
       "jquery/jquery.min.js",
@@ -21,11 +21,11 @@
   },
   "browser_action": {
     "default_icon": {
-      "19": "img/icon19.png",
-      "38": "img/icon38.png"
+      "19": "browserIcon.png",
+      "38": "browserIcon.png"
     },
-    "default_popup": "button/popup.html",
-    "default_title": "__MSG_adblock_click_for_details__"
+    "default_popup": "popup-2.html",
+    "default_title": "Click to initialize"
   },
   "content_scripts": [
     {
@@ -72,9 +72,9 @@
   "default_locale": "en",
   "description": "__MSG_description2__",
   "icons": {
-    "16": "img/icon16.png",
-    "48": "img/icon48.png",
-    "128": "img/icon128.png"
+    "16": "browserIcon.png",
+    "48": "browserIcon.png",
+    "128": "browserIcon.png"
   },
   "incognito": "spanning",
   "manifest_version": 2,
@@ -84,7 +84,7 @@
     "http://*/*", "https://*/*", "contextMenus", "tabs", "idle", "webRequest", "webRequestBlocking", "webNavigation", "alarms"
   ],
   "web_accessible_resources": [
-    "img/icon24.png",
+    "browserIcon.png",
     "jquery/css/images/ui-bg_inset-hard_100_fcfdfd_1x100.png",
     "jquery/css/images/ui-icons_056b93_256x240.png",
     "jquery/css/images/ui-icons_d8e7f3_256x240.png",
