@@ -42,6 +42,7 @@ parseUri.secondLevelDomainOnly = function(domain, keepDot) {
   return match[keepDot ? 0 : 1].toLowerCase();
 };
 
+/* DATABASE VERSION
 function retrieveAds(adsToShow) {
     //output should be: url1,url2,url3,url1
     var ads = [];
@@ -75,7 +76,7 @@ function retrieveAds(adsToShow) {
         i will be how many times i've incremented, from 0 to adsToShow
         newCount will be the index I'm pulling the value from.
         
-        */
+        */ /*
         
         var i = 0;
         while (i < adsToShow) {
@@ -105,7 +106,7 @@ function retrieveAds(adsToShow) {
     return ads;    
     }
     
-
+*/
 function createAccount(email, password) {
 
  var data = {"email": email, "password": password};
@@ -155,14 +156,17 @@ function flipPause() {
 function saveAdPrefs(prefs) {
  //sample prefs object:
     var prefs = {
-      "age":"21",
-      "interests": {"0":"golf","1":"cooking"}      
+      "0":"fashion",
+      "1":"cosmetics",
+       "2":"music"
     }
-    filterAds(prefs);
-    
+    //filterAds(prefs);
+    //save user prefs in local storage
+    chrome.storage.sync.set({"preferences":prefs});
 }
 
 
+/* DATABASE VERSION
 function filterAds(prefs) {
   //uses preferences from web token and creates new (or overwrites) filtered ad object in local storage 
     data = prefs;
@@ -173,6 +177,8 @@ function filterAds(prefs) {
           }); 
     
 }
+
+*/
   
 function downloadAds() {
  //download ads from database and put in local storage
@@ -212,6 +218,69 @@ function calculateEarnings() {
     
     return earnings;
 }
+
+
+function createPrefLists() {    
+  var fashion = ["http://www.myredglasses.com/wp-content/uploads/2014/09/Tootsies-Digita-Ads-My-Red-Glasses-Blog-160x600-v1.png", "http://blog.freepeople.com/wp-content/uploads/2014/09/Sept_160x600.jpg", "http://www.myredglasses.com/wp-content/uploads/2014/09/Tootsies-Digita-Ads-My-Red-Glasses-Blog-160x600-v1.png"];
+  var cosmetics = ["http://www.shareasale.com/image/49325/halloween_v1_banners-336x280.jpg", "http://www.sephora.com/contentimages/affiliates/freegift_728x90.jpg" ];
+  var music = ["http://evoke.la/images/LadyGaga/PRG728x90.jpg", "http://www.ihiphopmusic.com/wp-content/uploads/2010/04/Ads-160x600.jpg"];
+  var prefObj = {"fashion": fashion, "cosmetics":cosmetics, "music":music};
+  return prefObj;  
+    
+}
+
+
+function retrieveAds() {
+    //an object which contains the three preference lists and a function getNext which pops out one url successively
+   var adsGen = {};
+   adsGen.prefObj = createPrefLists();
+   adsGen.next = "fashion";
+   adsGen.i = 0;
+   adsGen.j = 0;
+   adsGen.k = 0;
+   adsGen.getNext = function() {
+       if (adsGen.next == "fashion") {
+        adsGen.next = "cosmetics";
+        return adsGen.prefObj.cosmetics[adsGen.i];
+           adsGen.i++;
+           if (i >= adsGen.prefObj."fashion".length)
+               adsGen.i = 0;
+       }
+        else if (adsGen.next == "cosmetics") {
+            adsGen.next = "music";
+            return adsGen.prefObj.cosmetics[adsGen.j];  
+            adsGen.j++;
+              if (j >= adsGen.prefObj."cosmetics".length)
+               adsGen.j = 0;
+        }
+       
+       else {
+           adsGen.next = "fashion";
+           return adsGen.prefObj.music[adsGen.k];
+           adsGen.k++; 
+             if (k >= adsGen.prefObj."music".length)
+               adsGen.k = 0;
+       }
+       
+       //need to post these to popup
+       incrementImpressions(1);
+       calculateEarnings();
+   }
+    
+   return adsGen; 
+}
+
+function testAds() {
+    var ads = retrieveAds();
+    var i = 0;
+    while (i < 10) {
+    console.log("nextad "+ ads.next + " " + ads.getNext()); 
+    i++;
+    }
+       
+}
+
+
     
 function testStorage() {
    chrome.storage.sync.set({"allAds": {"ad1":"url1","ad2":"url2", "ad3":"url3"}});

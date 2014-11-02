@@ -1,0 +1,265 @@
+var css = {
+      width: placement.width + "px",
+      height: placement.height + "px",
+      background: "url(" + placement.url + ") no-repeat",
+      backgroundPosition: "-" + placement.left + "px -" + placement.top + "px",
+      backgroundSize: placement.x + "px " + placement.y + "px",
+      margin: placement.offsettop + "px " + placement.offsetleft + "px",
+    // nytimes.com float:right ad at top is on the left without this
+      "float": (window.getComputedStyle(el)["float"] || undefined)
+    };
+    
+    
+css = {
+    width: "200px",
+    height: "300px",
+    background: "url(sonicbattle2.jpg) no-repeat",
+    backgroundPosition: "-20px -10px",
+    backgroundSize: 300px200px,
+    margin: 20px, 10px
+    "float": (window.getComputerStyle(el)["float"] || undefined)
+}
+
+for (var k in css) {        
+      newPic.style[k] = css[k];
+    }
+    
+    // for variation in positioning 
+for (var k in {position:1,left:1,top:1,bottom:1,right:1,display:1}) {
+      newPic.style[k] = window.getComputedStyle(el)[k];
+    }
+
+// Prevent clicking through to ad; go to attribution page instead
+    // Will actually go to domain instead
+    newPic.addEventListener("click", function(e) {
+      if (placement.attribution_url//domain)
+        window.open(placement.attribution_url);
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }, false);
+
+
+how'd he find placement? 
+    - get_placement_for(deleted_el, callback)
+I promise to keep track of everything and think ahead
+as long as I study him. 
+    - Rather or not we've already injected the pic/ad 
+    
+    
+    
+Make it so ads disappear on click: 
+    newPic.infoCard = $("<div>", {
+        "class": "picinjection-infocard",
+        css: {
+          "position": "absolute",
+          "min-width": cardsize.width,
+          "min-height": cardsize.height,
+          "z-index": 1000000,
+          "padding": 3,
+          "box-sizing": "border-box",
+          "border": "2px solid rgb(128, 128, 128)",
+          "font": "normal small Arial, sans-serif",
+          "color": "black",
+          "background-color": "rgba(188, 188, 188, 0.7)",
+        } });
+      newPic.infoCard.appendTo("body");
+      var folder = (SAFARI ? "catblock/icons/" : "icons/");
+      newPic.infoCard.
+        append($("<a>", {
+          href: "#",
+          text: "X",
+          title: "Remove (just this once)",
+          css: {
+            float: "right",
+            "font": "bold 20px sans-serif",
+            "text-decoration": "none",
+            color: "blue",
+            "margin-left": 10,
+          },
+          click: function() {
+            newPic.infoCard.remove();
+            $(newPic).remove();
+          }
+        })).
+        append($("<img>", {
+          css: {
+            float: "right",
+            // independent.co.uk borders all imgs
+            border: "none",
+          },
+          src: chrome.extension.getURL(folder + "icon19.png")
+        })).
+        append("<br>");
+        
+        
+
+Resize blocked elements to original size so we can use their bodies:
+_forceToOriginalSizeAndAugment: function(el, displayValue) {
+
+  // We may have already augmented this element...
+  if (el.dataset.picinjectionaugmented) {
+    return;
+  }
+
+  var oldCssText = el.style.cssText;
+  el.style.setProperty("visibility", "hidden", "important");
+  el.style.setProperty("display", displayValue, "important");
+  var size = el.style.backgroundPosition.match(/^(\w+) (\w+)$/);
+  if (size) {
+    // Restore el.width&el.height to whatever they were before AdBlock.
+    var dims = { width: size[1], height: size[2] };
+    for (var dim in dims) {
+      if (dims[dim] === "-1px")
+        el.removeAttribute(dim);
+      else
+        el.setAttribute(dim, dims[dim]);
+    }
+  }
+
+  this._augment(el, function() {
+    el.style.cssText = oldCssText; // Re-hide the section
+    var addedImgs = document.getElementsByClassName("picinjection-image");
+    for (var i = 0; i < addedImgs.length; i++) {
+        var displayVal = window.getComputedStyle(addedImgs[i])["display"];
+        if (displayVal === 'none') {
+            addedImgs[i].style.display = "";
+        }
+    }    
+    
+  });
+  
+},
+
+
+
+
+_picdata: {
+
+  "big": [
+    { filename: "5.jpg",
+      x: 270, y: 256, left: 20, right: 5, top: 27, bot: 0 },
+    { filename: "6.jpg",
+      x: 350, y: 263, left: 153, right: 54, top: 45, bot: 87 },
+    { filename: "big1.jpg",
+      x: 228, y: 249, left: 96, right: 52, top: 68, bot: 67 },
+    { filename: "big2.jpg",
+      x: 236, y: 399, left: 41, right: 0, top: 0, bot: 50 },
+    { filename: "big3.jpg",
+      x: 340, y: 375, left: 0, right: 52, top: 42, bot: 10 },
+    { filename: "big4.jpg",
+      x: 170, y: 240, left: 28, right: 87, top: 20, bot: 4 },
+    { filename: "1.jpg",
+      x: 384, y: 288, left: 52, right: 121, top: 73, bot: 36 },
+  ],
+  "small": [
+    { filename: "7.jpg",
+      x: 132, y: 91, left: 33, right: 26, top: 0, bot: 0 },
+    { filename: "9.jpg",
+      x: 121, y: 102, left: 0, right: 0, top: 0, bot: 0 },
+    { filename: "small1.jpg",
+      x: 115, y: 125, left: 0, right: 0, top: 0, bot: 0 },
+    { filename: "small2.jpg",
+      x: 126, y: 131, left: 0, right: 0, top: 0, bot: 0 },
+    { filename: "small3.jpg",
+      x: 105, y: 98, left: 0, right: 0, top: 0, bot: 0 },
+    { filename: "small4.jpg",
+      x: 135, y: 126, left: 0, right: 0, top: 0, bot: 0 },
+    { filename: "small5.jpg",
+      x: 133, y: 108, left: 0, right: 0, top: 0, bot: 0 },
+    { filename: "small6.jpg",
+      x: 120, y: 99, left: 0, right: 0, top: 0, bot: 0 },
+    { filename: "small7.jpg",
+      x: 124, y: 96, left: 0, right: 0, top: 0, bot: 0 },
+    { filename: "small8.jpg",
+      x: 119, y: 114, left: 0, right: 0, top: 0, bot: 0 },
+  ],
+  "wide": [
+    { filename: "wide1.jpg",
+      x: 382, y: 137, left: 0, right: 0, top: 9, bot: 5 },
+    { filename: "wide2.jpg",
+      x: 470, y: 102, left:0, right: 0, top: 0, bot: 0 },
+    { filename: "wide3.jpg",
+      x: 251, y: 90, left:0, right: 0, top: 0, bot: 0 },
+    { filename: "wide4.jpg",
+      x: 469, y: 162, left:0, right: 0, top: 22, bot: 12 },
+    { filename: "big3.jpg",  // big
+      x: 340, y: 375, left: 0, right: 0, top: 66, bot: 226 },
+    { filename: "1.jpg",  // big
+      x: 384, y: 288, left: 0, right: 0, top: 116, bot: 117 },
+    { filename: "6.jpg",  // big
+      x: 350, y: 263, left: 0, right: 0, top: 73, bot: 100 },
+  ],
+  "tall": [
+    { filename: "8.jpg",
+      x: 240, y: 480, left: 69, right: 51, top: 0, bot: 0 },
+    { filename: "tall3.jpg",
+      x: 103, y: 272, left: 0, right: 0, top: 0, bot: 0 },
+    { filename: "tall4.jpg",
+      x: 139, y: 401, left: 0, right: 0, top: 0, bot: 0 },
+    { filename: "tall5.jpg",
+      x: 129, y: 320, left: 5, right: 28, top: 0, bot: 0 },
+    { filename: "tall6.jpg",
+      x: 109, y: 385, left: 9, right: 7, top: 0, bot: 0 },
+    { filename: "5.jpg",  // big
+      x: 270, y: 256, left: 180, right: 45, top: 0, bot: 0 },
+    { filename: "big1.jpg",  // big
+      x: 228, y: 249, left: 96, right: 52, top: 0, bot: 0 },
+    { filename: "big3.jpg",  // big
+      x: 340, y: 375, left: 159, right: 60, top: 0, bot: 0 },
+  ],
+},
+
+
+
+
+
+Planning: 
+
+    1. Constructing an image 
+        - pic_data 
+    2. Finding a suitable element to inject 
+        - target element 
+    3. Getting the sizes to match up perfectly
+        - Using pictures of similar sizes 
+    4. Create function that chooses the the best pic for a given size (janita) 
+    5. 
+
+
+Getting the images into storage 
+    new Image().src
+    src: chrome.extension.getURL(folder + "icon19.png")
+    
+Replacing ads cleverly, 1 by 1
+    - make function in toolbox that initializes their data to local storage.
+        - initAds()
+            - Images object 
+                - Tech (array of IMGdata objects)
+                    IMGdata - width, height, left=0, right=0, top=0, bot=0
+                - Fashion (array of IMGdata objects) 
+                
+    - make a function that returns all pics in storage as an array of images.
+    - Use christians formula to get the pictures catagorized. 
+        huge > 1,000,000 ,> big > 40000,> small, 
+    - Create an object that can sort its lists, and that
+        has a function that takes in a width and height
+        and spits out the one with the closest area. 
+    - replace a lot of ads using catblock techniques 
+    - make picture disappear when clicked.  
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

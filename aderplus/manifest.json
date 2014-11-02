@@ -5,7 +5,7 @@
     "scripts": [
       "jquery/jquery.min.js",
       "port.js",
-      "functions.js",
+      "f.js",
       "toolbox.js",
       "stats.js",
       "filtering/domainset.js",
@@ -51,7 +51,7 @@
       "matches": ["http://*/*", "https://*/*"],
       "js": [
         "port.js",
-        "functions.js", 
+        "f.js", 
         "filtering/filteroptions.js",
         "adblock_start_common.js",
         "adblock_start_chrome.js"
