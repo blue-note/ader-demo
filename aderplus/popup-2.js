@@ -1,13 +1,18 @@
-//initialize();
+initialize();
 window.onload = function() {
+    
 update();
 generateButtons();
  //setTimeout(update(),50);      
 }
 
 function initialize() {
+    if(null == localStorage["initialized"])
+       {
     chrome.storage.sync.set({"sumImpressions":0});
-    chrome.storage.sync.set({"preferences":{}}); 
+    chrome.storage.sync.set({"preferences":{}});
+    initPics();
+    }
 }
 
 Number.prototype.toFixedDown = function(digits) {
