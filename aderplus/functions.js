@@ -155,26 +155,19 @@ function flipPause() {
     
 function saveAdPref(pref) {
     
- //sample prefs object:
-    //filterAds(prefs);
-    //save user prefs in local storage
-    
-    /* sample prefs object:
-    prefs = {"fashion": "fashion", 
-            "food": "food",
-            "music": "music"
-            }
-    */
-    chrome.storage.sync.get(["preferences"], function(data) {
-       var prefs = data.preferences;
-       prefs.pref = pref;
-      chrome.storage.sync.set({"preferences":prefs}, function() { 
+//ads to array of prefs in local storage
+   chrome.storage.sync.get(["preferences"], function(data) {
+       prefs = data.preferences;
+       prefs.push(pref);
+       chrome.storage.sync.set({"preferences":prefs}, function() {
+          master.filterPrefs();
      });        
     });
     
+
 }
 
-
+                            
 /* DATABASE VERSION
 function filterAds(prefs) {
   //uses preferences from web token and creates new (or overwrites) filtered ad object in local storage 
@@ -319,13 +312,9 @@ master.tallArray = [];
 master.hugeArray = [];
 //area > 1,000,000
 
-master.filterImages = function(array_of_images) {
-   for (j = 0; j <array_of_images.length; j++) {
-        console.log("beforeFilter: "+ j + array_of_images[j].width);
-        
-    }  
-    
-    
+
+master.filterImages = function() { 
+    array_of_images=returnImages();
     for (index = 0; index < array_of_images.length; index++) {  
         var current_object=array_of_images[index];  
         var ratio=current_object.width/current_object.height;
@@ -340,7 +329,7 @@ master.filterImages = function(array_of_images) {
         else {this.smallArray.push(current_object);}
         
     } 
-    
+   console.log(array_of_images); 
 
 }
 
@@ -477,21 +466,33 @@ master.findClosest = function (imageArray, pixels) {
     
     
     
+ master.filterPrefs = function() {
+    initPics();
+    chrome.storage.sync.get(["allImages"], function(data) {     
+     for(var property in data) {
+    alert(property + "=" + data[property]);
+}     
+    chrome.storage.sync.get(["preferences"], function(data) {
+     var prefs = data.preferences;
+     var prefImages = [];
+       
+     for (var obj in images) {
+        for (var pref in prefs) {
+            if (obj.interest == pref) 
+                prefImages.push(obj);   
+        }     
+     }
+     
+   console.log("prefImages:" + prefImages);
+
+     });
+     });
+ }
+     
     
     
-    
-    
-    
-    
- 
 //console.log("bigArray after Sort "+master.bigArray);
     
-    
-
-
-
-
-
 
 //this beast takes in a master list of image objects (each with name, width, height, and preference) and places it into five lists of different size categories
 //I need to sort each one in order of area 
