@@ -167,10 +167,8 @@ function saveAdPref(pref) {
     */
     chrome.storage.sync.get(["preferences"], function(data) {
        var prefs = data.preferences;
-       prefs.push("id",pref);
-      chrome.storage.sync.set({"preferences":prefs}, function() {
-         
-         console.log("prefs:" + prefs);
+       prefs.pref = pref;
+      chrome.storage.sync.set({"preferences":prefs}, function() { 
      });        
     });
     
@@ -280,6 +278,13 @@ function retrieveAds() {
    return adsGen; 
 }
 
+
+
+
+
+
+
+
 function testAds() {
     var ads = retrieveAds();
     var i = 0;
@@ -300,9 +305,273 @@ function testStorage() {
    });
     
 }
+
+
+var master = {};
+master.smallArray = [];
+//not in big or huge
+master.bigArray = [];
+//bigger than 40,000px area, less than 1,000,000
+master.wideArray = [];
+//width/height >= 2
+master.tallArray = [];
+//height/width >= 2
+master.hugeArray = [];
+//area > 1,000,000
+
+master.filterImages = function(array_of_images) {
+   for (j = 0; j <array_of_images.length; j++) {
+        console.log("beforeFilter: "+ j + array_of_images[j].width);
+        
+    }  
+    
+    
+    for (index = 0; index < array_of_images.length; index++) {  
+        var current_object=array_of_images[index];  
+        var ratio=current_object.width/current_object.height;
+        var invertedRatio=current_object.height/current_object.width;
+        if (invertedRatio>=2) this.tallArray.push(current_object);
+        if(ratio >=2) this.wideArray.push(current_object);
+        if(current_object.width*current_object.height>=1000000)
+        this.hugeArray.push(current_object); 
+        if(current_object.width*current_object.height>=40000 && current_object.width*current_object.height<1000000) {
+        this.bigArray.push(current_object);
+                    }
+        else {this.smallArray.push(current_object);}
+        
+    } 
+    
+
+}
+
+master.sortSmall = function() {
+    var arr = this.smallArray;
+    for (i=0; i < arr.length; i++) {
+        for (j=i; j < arr.length-1; j++) { 
+            var curr = (parseInt(arr[j].width) * parseInt(arr[j].height));
+            var next = (parseInt(arr[j+1].width) * parseInt(arr[j].height));
+            if (curr > next) {
+                var swap = curr;
+                curr = next;
+                next = swap;
+            }
+                
+        }
+        
+    }
+}
+    
+  master.sortBig = function() {
+    var arr = this.bigArray;
+    for (i=0; i < arr.length; i++) {
+        for (j=i; j < arr.length-1; j++) { 
+            var curr = (parseInt(arr[j].width) * parseInt(arr[j].height));
+            var next = (parseInt(arr[j+1].width) * parseInt(arr[j].height));
+            if (curr > next) {
+                var swap = curr;
+                curr = next;
+                next = swap;
+            }
+                
+        }
+        
+    }
+  }
+    
+    master.sortWide = function() {
+    //console.log("bigArray:"+master.bigArray);
+    var arr = this.wideArray;
+    for (i=0; i < arr.length; i++) {
+        for (j=i; j < arr.length-1; j++) { 
+            var curr = (parseInt(arr[j].width) * parseInt(arr[j].height));
+            var next = (parseInt(arr[j+1].width) * parseInt(arr[j].height));
+            if (curr > next) {
+                var swap = curr;
+                curr = next;
+                next = swap;
+            }
+                
+        }
+        
+    }
+}
+ 
+  master.sortTall = function() {
+    var arr = this.tallArray;
+    for (i=0; i < arr.length; i++) {
+        for (j=i; j < arr.length-1; j++) { 
+            var curr = (parseInt(arr[j].width) * parseInt(arr[j].height));
+            var next = (parseInt(arr[j+1].width) * parseInt(arr[j].height));
+            if (curr > next) {
+                var swap = curr;
+                curr = next;
+                next = swap;
+            }
+                
+        }
+        
+    }
+  }
+  
+  
+  master.sortHuge = function() {
+    var arr = this.hugeArray;
+    for (i=0; i < arr.length; i++) {
+        for (j=i; j < arr.length-1; j++) { 
+            var curr = (parseInt(arr[j].width) * parseInt(arr[j].height));
+            var next = (parseInt(arr[j+1].width) * parseInt(arr[j].height));
+            if (curr > next) {
+                var swap = curr;
+                curr = next;
+                next = swap;
+            }
+                
+        }
+        
+    }
+  }
+    
+    
+ master.findBest = function (width, height) {
+ var pixels = width * height;
+ var huge = pixels > 1000000;
+ var big = pixels >= 40000;
+ var small = !big;
+ var wide = (width / height) >= 2;
+ var tall = (height / width) >= 2;
+ 
+ if(huge)
+     return (this.findClosest(this.hugeArray,pixels));
+    
+ if(wide)
+     return (this.findClosest(this.wideArray,pixels));
+ 
+     else if(tall)
+     return (this.findClosest(this.tallArray,pixels));
+    
+ if(big)
+     return (this.findClosest(this.bigArray,pixels));
+ else
+     return (this.findClosest(this.smallArray,pixels));
+  
+}
+
+
+master.findClosest = function (imageArray, pixels) {
+    var min = 0;
+    var max = imageArray.length;
+    var length = max - min;
+    var closestObj = {};
+    var closestDist = Infinity;
+    
+    for (obj in imageArray) {
+        if(Math.abs(obj.width*obj.height - pixels) < closestDist) {
+            closestObj = obj;
+            closestDist = Math.abs(obj.width*obj.height - pixels);
+        }
+        
+        
+    }
+    return closestObj;
+}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+ 
+//console.log("bigArray after Sort "+master.bigArray);
+    
     
 
 
+
+
+
+
+//this beast takes in a master list of image objects (each with name, width, height, and preference) and places it into five lists of different size categories
+//I need to sort each one in order of area 
+//write a function to take in an object and find the closest img
+
+/* 1. create a master object whose properties will be the different size array types
+    2. call the function sortImages on this object
+    3. write another function which sorts an array in the object by increasing area
+    4. call this on each array in the object
+    5. write a find function that takes in an object w height and width properties and returns the closest img
+
+//do I need container?
+
+
+
+
+*/
+
+/*
+var unknown_object={height:'10',width:'17'};
+
+
+var object1={height:'23',width:'11'};
+var object2={height:'7',width:'56'};
+var object3={height:'13',width:'6'};
+var array_of_images=[object1,object2,object3];
+
+/*ic = Krees’ function ( t ); 
+    (function takes in an object with a height and width value.
+It then goes through a list of img elements,  and returns the one with the closest width and height values. )*/
+
+//initialize master object
+
+
+
+
+
+
+
+/*
+var master = {};
+master.filterImages =  
+ 
+function(array_of_images) { 
+    master.smallArray={};
+    
+    
+    
+    
+    
+    
+    master.bigArray={};
+    master.wideArray={};
+    master.tallArray={};
+    master.hugeArray={};
+    master.container={};
+    
+    for(index = 0; index < array_of_images.length; index++) {
+        var current_object=array_of_images[index];
+        var ratio=current_object.width/current_object.height;
+        var invertedRatio=current_object.height/current_object.width;
+        //if the ratio of y/x is 2 or more then it's tall 
+        if(invertedRatio>=2){tallArray[index]=invertedRatio; container[index]=tallArray[index]; console.log(invertedRatio+" invertedRatio");}
+        //if x/y is 2 or more wide
+        else if(ratio>=2){wideArray[index]=ratio; container[index]=wideArray[index]; console.log(ratio);}
+        //if x * y is >170*240px big 
+        else if(current_object.width*current_object.height>=40000 && current_object.width*current_object.height<1000000){
+            bigArray[index]=ratio; container[index]=bigArray[index]; console.log(ratio);}
+        //a minimum value if either width or height < 15px
+        else if(current_object.width<15||current_object.height<15){
+            smallArray[index]=ratio; container[index]=smallArray[index]; console.log(ratio);}
+        else if(current_object.width*current_object.height>=1000000){
+            hugeArray[index]=ratio; container[index]=hugeArray[index]; console.log(ratio);
+        }
+    }
+    return container;
+}
+
+    
+*/
     
     
 

@@ -16,7 +16,15 @@ Number.prototype.toFixedDown = function(digits) {
     return m ? parseFloat(m[1]) : this.valueOf();
 };
 
-function update() {
+function update() { 
+    {
+    var object1={height:'53000',width:'1'};
+    var object2={height:'60000',width:'1'};
+    var object3={height:'45000',width:'1'};
+    var array_of_images=[object1,object2,object3];
+    master.filterImages(array_of_images);
+    master.sortSmall();
+    }
     incrementImpressions(4);
     chrome.storage.sync.get(["sumImpressions"], function(data) {
         document.getElementById("impressionCount").innerHTML += " "+ data.sumImpressions;
