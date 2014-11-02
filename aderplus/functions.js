@@ -153,16 +153,26 @@ function flipPause() {
        
 }
     
-function saveAdPrefs(prefs) {
+function saveAdPref(pref) {
  //sample prefs object:
-    var prefs = {
-      "0":"fashion",
-      "1":"cosmetics",
-       "2":"music"
-    }
     //filterAds(prefs);
     //save user prefs in local storage
-    chrome.storage.sync.set({"preferences":prefs});
+    
+    /* sample prefs object:
+    prefs = {"id": fashion, 
+            "id": food,
+            "id": music
+            }
+    */
+    chrome.storage.sync.get(["preferences"], function(data) {
+       var prefs = data.preferences;
+       prefs.push("id",pref);
+     chrome.storage.sync.set({"preferences":prefs}, function() {
+         
+         console.log("prefs:" + prefs);
+     });        
+    });
+    
 }
 
 
@@ -188,8 +198,7 @@ function downloadAds() {
     $.getJSON(devServerURL, data, function(data) { 
         //data will be a key-value object of indexes to ad urls
           data = {"ad1":"url1","ad2":"url2"};
-          chrome.storage.sync.set({"allAds":data}, function() {
-           console.log("set preferences");   
+          chrome.storage.sync.set({"allAds":data}, function() { 
             testStorage();
           });
     });
@@ -197,15 +206,16 @@ function downloadAds() {
 }
  
 
-function incrementImpressions(num) {
+function incrementImpressions(num) {  
+    var newImpressions;
     chrome.storage.sync.get(["sumImpressions"], function(data) {
-        currImpressions = data.sumImpressions;
-        newImpressions = parseInt(currImpressions) + num; 
-    chrome.storage.sync.set({"sumImpressions":newImpressions}, function() {
-       calculateEarnings();       
+        var currImpressions = data.sumImpressions;
+        newImpressions = parseInt(currImpressions) + num;
+    chrome.storage.sync.set({"sumImpressions":newImpressions}, function() { 
+    calculateEarnings();        
     });
     });
-    return newImpressions;
+    
 }
 
 function calculateEarnings() {
@@ -216,7 +226,6 @@ function calculateEarnings() {
         
     });
     
-    return earnings;
 }
 
 
@@ -243,14 +252,14 @@ function retrieveAds() {
         adsGen.next = "cosmetics";
         return adsGen.prefObj.cosmetics[adsGen.i];
            adsGen.i++;
-           if (i >= adsGen.prefObj."fashion".length)
+           if (i >= adsGen.prefObj.fashion.length)
                adsGen.i = 0;
        }
         else if (adsGen.next == "cosmetics") {
             adsGen.next = "music";
             return adsGen.prefObj.cosmetics[adsGen.j];  
             adsGen.j++;
-              if (j >= adsGen.prefObj."cosmetics".length)
+              if (j >= adsGen.prefObj.cosmetics.length)
                adsGen.j = 0;
         }
        
@@ -258,7 +267,7 @@ function retrieveAds() {
            adsGen.next = "fashion";
            return adsGen.prefObj.music[adsGen.k];
            adsGen.k++; 
-             if (k >= adsGen.prefObj."music".length)
+             if (k >= adsGen.prefObj.music.length)
                adsGen.k = 0;
        }
        
