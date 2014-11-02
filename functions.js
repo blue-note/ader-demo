@@ -154,20 +154,21 @@ function flipPause() {
 }
     
 function saveAdPref(pref) {
+    
  //sample prefs object:
     //filterAds(prefs);
     //save user prefs in local storage
     
     /* sample prefs object:
-    prefs = {"id": fashion, 
-            "id": food,
-            "id": music
+    prefs = {"fashion": "fashion", 
+            "food": "food",
+            "music": "music"
             }
     */
     chrome.storage.sync.get(["preferences"], function(data) {
        var prefs = data.preferences;
        prefs.push("id",pref);
-     chrome.storage.sync.set({"preferences":prefs}, function() {
+      chrome.storage.sync.set({"preferences":prefs}, function() {
          
          console.log("prefs:" + prefs);
      });        

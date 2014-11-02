@@ -59,7 +59,7 @@ function createRadioElement(name) {
     
     radioFragment.innerHTML = radioHtml;
     radioFragment.addEventListener("click", function() {
-        var pref = radioFragment.getAttribute();
+        var pref = radioFragment.getAttribute("name");
         saveAdPref(pref);     
     });
     
