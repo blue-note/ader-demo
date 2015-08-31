@@ -9,7 +9,7 @@ function imgObj(filename, width, length,interest) {
     this.interest = interest;
     }
 
-var f = "fasion";
+var f = "fashion";
 var t = "tech";
 var m = "mis";
 
@@ -39,12 +39,21 @@ var imageArray = [new imgObj("Beyonce160x600.jpg", 160, 600, f),
                   new imgObj("rumble336x280.jpg",336,280,t),
                   new imgObj("V3_336x280.jpg",336,280,t),
                   new imgObj("WOW160x600.png",160,600,t),
-                  new imgObj("barack.jpg",300,250,m)]; 
+                  new imgObj("barack.jpg",300,250,m)];
+
+function returnImages() {
+    return imageArray;
+    
+}
 
 function initPics(){
-    if(null == localStorage["initialized"]){
+    //if(null == localStorage["initialized"]){
         localStorage["initialized"] = 1;
-        localStorage["allImages"] = imageArray;
-    }
+        //localStorage["allImages"] = imageArray;
+        chrome.storage.sync.set({"allImages":imageArray}, function() {  
+            console.log("imageArray"+ imageArray);
+        });
+        
+   // }
 }
 

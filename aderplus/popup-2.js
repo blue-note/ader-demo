@@ -1,24 +1,28 @@
+<<<<<<< HEAD
 initialize();
 
 //master has to create a new filtered array that iterates through the temp image list from local storage and filters out based on which preferences were selected
 
 
 
+=======
+>>>>>>> fdc79d4e315d0fef3ddc538439340a398f632576
 
 window.onload = function() {
-    
+initialize();  
 update();
 generateButtons();
  //setTimeout(update(),50);      
 }
 
 function initialize() {
-    if(null == localStorage["initialized"])
-       {
+    //if(null == localStorage["initialized"])
+      // {
     chrome.storage.sync.set({"sumImpressions":0});
-    chrome.storage.sync.set({"preferences":{}});
+    chrome.storage.sync.set({"preferences":["technology"]}, function() {
+    });
     initPics();
-    }
+   // }
 }
 
 Number.prototype.toFixedDown = function(digits) {
@@ -29,9 +33,14 @@ Number.prototype.toFixedDown = function(digits) {
 
 function update() { 
     {
+<<<<<<< HEAD
         
     //sort ad objects from temp and put it back in there    
         
+=======
+    master.filterImages();
+   // master.filterPrefs();
+>>>>>>> fdc79d4e315d0fef3ddc538439340a398f632576
     var object1={height:'53000',width:'1'};
     var object2={height:'60000',width:'1'};
     var object3={height:'45000',width:'1'};
@@ -82,7 +91,7 @@ function createRadioElement(name) {
     radioFragment.innerHTML = radioHtml;
     radioFragment.addEventListener("click", function() {
         var pref = radioFragment.getAttribute("name");
-        saveAdPref(pref);     
+        saveAdPref(pref);
     });
     
     document.body.appendChild(radioFragment);

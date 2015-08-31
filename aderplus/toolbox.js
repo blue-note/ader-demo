@@ -2,7 +2,7 @@
 // looking for best picture to replace space with 
     
 
-var findBest = function (width, height) {
+ var findBest = function (width, height) {
  var pixels = width * height;
  var huge = pixels > 1000000;
  var big = pixels >= 40000;
