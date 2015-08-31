@@ -6,6 +6,7 @@ function imgObj(filename, width, length,interest) {
     this.width = width;
     this.length = length;
     this.name = filename;
+    this.interest = interest;
     }
 
 var f = "fasion";

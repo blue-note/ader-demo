@@ -1,4 +1,10 @@
 initialize();
+
+//master has to create a new filtered array that iterates through the temp image list from local storage and filters out based on which preferences were selected
+
+
+
+
 window.onload = function() {
     
 update();
@@ -23,6 +29,9 @@ Number.prototype.toFixedDown = function(digits) {
 
 function update() { 
     {
+        
+    //sort ad objects from temp and put it back in there    
+        
     var object1={height:'53000',width:'1'};
     var object2={height:'60000',width:'1'};
     var object3={height:'45000',width:'1'};
